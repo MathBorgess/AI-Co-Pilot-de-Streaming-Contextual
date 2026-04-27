@@ -153,4 +153,3 @@ By default (`MOCK_MODE=true`), the system runs without an OpenAI API key. All ag
 5. AI pipeline: chunk → ChromaDB (store) → RAG retrieval → 3 agents → response
 6. AI results are broadcast to all WebSocket clients
 7. Frontend updates 3 panels in real-time: Summary, Questions, Insights
-Projeto Sistema estilo “Match Chat”, mas generalizado: Input: stream (live aula, reunião, evento, gameplay) Output em tempo real: resumo incremental perguntas sugeridas insights contextuais decisões automatizadas Exemplo prático: Para educação → tutor ao vivo Para produto → copiloto de reuniões Para dev → copiloto de incidentes em tempo real
