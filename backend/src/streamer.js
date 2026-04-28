@@ -1,17 +1,17 @@
 'use strict';
 
-const DEMO_TEXT = `Artificial intelligence is transforming how we interact with technology.
-Machine learning models can now understand context and generate meaningful responses.
-Large language models have revolutionized natural language processing tasks.
-Streaming systems allow for real-time processing of continuous data flows.
-Event-driven architectures enable scalable and responsive applications.
-Retrieval-augmented generation combines search with language model capabilities.
-Multi-agent systems can coordinate to solve complex problems collaboratively.
-Vector databases store semantic representations of text for efficient search.
-WebSockets enable bidirectional real-time communication between clients and servers.
-The future of AI involves increasingly autonomous and collaborative systems.
-Contextual understanding is key to building useful AI assistants.
-Incremental processing allows systems to respond before all data is available.`;
+const DEMO_TEXT = `We are here to make a final decision on the AI copilot launch strategy before the end of this meeting.
+The deadline is end of next quarter and the engineering team says we absolutely cannot slip any further.
+The team is split: half want to ship the current scope now, while others are deeply concerned about technical debt.
+Our current architecture may not scale beyond fifty thousand concurrent users without a significant refactor.
+The CTO is proposing we buy a third-party AI service instead of building the feature in-house.
+Building in-house gives us full control and better margins, but will delay the launch by at least six weeks.
+We need to decide today whether to build, buy, or delay the launch entirely — no more deferrals.
+Legal has flagged serious concerns about data privacy compliance with the third-party vendor we evaluated.
+Our main competitor launched a similar feature last week and is already gaining traction with enterprise clients.
+If we delay any further, we risk losing three key enterprise accounts that are actively evaluating our platform now.
+The engineering lead confirmed that the accumulated technical debt is a critical blocker for the six-month roadmap.
+The recommendation is to ship a limited version this quarter and iterate toward the full in-house solution next cycle.`;
 
 class StreamEmitter {
   constructor(options = {}) {

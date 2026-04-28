@@ -7,6 +7,8 @@ from rag.engine import RAGEngine
 from agents.summarizer import SummarizerAgent
 from agents.question_generator import QuestionGeneratorAgent
 from agents.insight_generator import InsightGeneratorAgent
+from agents.alert_agent import AlertAgent
+from agents.direction_agent import DirectionAgent
 
 
 def create_llm():
@@ -37,6 +39,8 @@ class Orchestrator:
         self.summarizer = SummarizerAgent(llm=llm)
         self.question_generator = QuestionGeneratorAgent(llm=llm)
         self.insight_generator = InsightGeneratorAgent(llm=llm)
+        self.alert_agent = AlertAgent(llm=llm)
+        self.direction_agent = DirectionAgent(llm=llm)
         self.chunk_count = 0
 
     def process(self, chunk: str, chunk_index: int = 0, total_chunks: int = 0) -> Dict[str, Any]:
@@ -62,6 +66,8 @@ class Orchestrator:
         summary = self.summarizer.process(chunk, context)
         questions = self.question_generator.process(chunk, context)
         insights = self.insight_generator.process(chunk, context)
+        alerts = self.alert_agent.process(chunk)
+        directions = self.direction_agent.process(chunk, recent_alerts=alerts[-3:])
 
         elapsed_ms = round((time.time() - start_time) * 1000, 2)
 
@@ -69,6 +75,8 @@ class Orchestrator:
             "summary": summary,
             "questions": questions,
             "insights": insights,
+            "alerts": alerts,
+            "directions": directions,
             "chunkIndex": chunk_index,
             "totalChunks": total_chunks,
             "chunkId": chunk_id,
@@ -82,4 +90,6 @@ class Orchestrator:
         self.summarizer.reset()
         self.question_generator.reset()
         self.insight_generator.reset()
+        self.alert_agent.reset()
+        self.direction_agent.reset()
         self.chunk_count = 0

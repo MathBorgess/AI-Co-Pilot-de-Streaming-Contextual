@@ -38,6 +38,7 @@ class RAGEngine:
         self.client = None
         self.collection = None
         self._chunks_in_memory: List[str] = []  # Fallback when ChromaDB unavailable
+        self._recent_chunks: List[str] = []      # Ordered insertion history for recency boost
         self._initialized = False
 
     def initialize(self):
@@ -89,29 +90,51 @@ class RAGEngine:
         else:
             self._chunks_in_memory.append(chunk)
 
+        # Track recency order (keep last 5)
+        self._recent_chunks.append(chunk)
+        if len(self._recent_chunks) > 5:
+            self._recent_chunks.pop(0)
+
         return chunk_id
 
     def retrieve(self, query: str, n_results: int = 3) -> List[str]:
-        """Retrieve relevant chunks for a query."""
+        """
+        Retrieve relevant chunks for a query with recency boost.
+        The most recently added chunk is always prepended to the result
+        so agents always have immediate context, even when similarity
+        scores favour older entries.
+        """
         self.initialize()
+
+        similarity_results: List[str] = []
 
         if self.collection is not None:
             try:
                 count = self.collection.count()
-                if count == 0:
-                    return []
-                actual_n = min(n_results, count)
-                query_embedding = _simple_embedding(query)
-                results = self.collection.query(
-                    query_embeddings=[query_embedding],
-                    n_results=actual_n
-                )
-                return results["documents"][0] if results["documents"] else []
+                if count > 0:
+                    actual_n = min(n_results, count)
+                    query_embedding = _simple_embedding(query)
+                    results = self.collection.query(
+                        query_embeddings=[query_embedding],
+                        n_results=actual_n
+                    )
+                    similarity_results = results["documents"][0] if results["documents"] else []
             except Exception as e:
                 print(f"[RAG] Error querying ChromaDB: {e}")
-                return self._chunks_in_memory[-n_results:]
+                similarity_results = self._chunks_in_memory[-n_results:]
+        else:
+            similarity_results = self._chunks_in_memory[-n_results:]
 
-        return self._chunks_in_memory[-n_results:]
+        # Recency boost: prepend the most recent chunk when not already included
+        recent = self._recent_chunks[-1:] if self._recent_chunks else []
+        seen: set = set()
+        merged: List[str] = []
+        for chunk in recent + similarity_results:
+            if chunk not in seen:
+                seen.add(chunk)
+                merged.append(chunk)
+
+        return merged[:n_results + 1]  # allow 1 extra slot for the recency entry
 
     def get_all_chunks(self) -> List[str]:
         """Get all stored chunks."""
@@ -130,6 +153,7 @@ class RAGEngine:
     def clear(self):
         """Clear all stored chunks."""
         self._chunks_in_memory.clear()
+        self._recent_chunks.clear()
         if self.client is not None and self.collection is not None:
             try:
                 self.client.delete_collection(self.collection_name)
