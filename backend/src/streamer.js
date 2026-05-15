@@ -1,17 +1,19 @@
 'use strict';
 
-const DEMO_TEXT = `We are here to make a final decision on the AI copilot launch strategy before the end of this meeting.
-The deadline is end of next quarter and the engineering team says we absolutely cannot slip any further.
-The team is split: half want to ship the current scope now, while others are deeply concerned about technical debt.
-Our current architecture may not scale beyond fifty thousand concurrent users without a significant refactor.
-The CTO is proposing we buy a third-party AI service instead of building the feature in-house.
-Building in-house gives us full control and better margins, but will delay the launch by at least six weeks.
-We need to decide today whether to build, buy, or delay the launch entirely — no more deferrals.
-Legal has flagged serious concerns about data privacy compliance with the third-party vendor we evaluated.
-Our main competitor launched a similar feature last week and is already gaining traction with enterprise clients.
-If we delay any further, we risk losing three key enterprise accounts that are actively evaluating our platform now.
-The engineering lead confirmed that the accumulated technical debt is a critical blocker for the six-month roadmap.
-The recommendation is to ship a limited version this quarter and iterate toward the full in-house solution next cycle.`;
+const DEMO_TEXT = `Hoje precisamos de uma decisao final sobre o copiloto de streaming para o mercado enterprise.
+O prazo do trimestre fecha em 6 semanas e nao podemos atrasar a janela de go/no-go.
+A equipe esta dividida: metade quer shipar o MVP agora, a outra metade teme a divida tecnica.
+A arquitetura atual nao escala acima de 50k usuarios concorrentes sem um refactor critico.
+O CTO quer comprar um provedor externo de IA para ganhar time-to-market.
+Build in-house aumenta margem, mas empurra o lancamento em pelo menos 6 semanas.
+Precisamos decidir hoje: build, buy ou adiar - sem mais deferrals.
+Legal flagou risco serio de compliance e privacidade com o fornecedor avaliado.
+O concorrente X lancou a feature semana passada e ja ganhou tracao em contas enterprise.
+Isso redefine nossa estrategia de posicionamento e o escopo do MVP.
+Se atrasarmos, perdemos 3 contas em fase final de negociacao e o ROI do trimestre cai.
+O budget atual so cobre o MVP; qualquer escopo extra exige aprovacao do board.
+O insight principal: o diferencial real e a integracao ao fluxo ao vivo, nao o modelo em si.
+Recomendacao: shipar um MVP restrito agora e iniciar o plano de migracao para in-house no proximo ciclo.`;
 
 class StreamEmitter {
   constructor(options = {}) {

@@ -11,13 +11,18 @@ class SummarizerAgent(BaseAgent):
         self.accumulated_chunks: List[str] = []
         self.current_summary: str = ""
 
-    def process(self, chunk: str, context: List[str] = None) -> str:
-        """Process a new chunk and update the summary."""
+    def process(self, chunk: str, context: List[str] = None, conversation: dict = None) -> str:
+        """Process a new chunk and update the summary. Accept conversation metadata to adapt tone.
+        """
         self.accumulated_chunks.append(chunk)
         context_str = "\n".join(context or [])
+        domain_meta = ''
+        if conversation:
+            domain_meta = f"Conversation domain: {conversation.get('domain')} | intent: {conversation.get('intent')} | mode: {conversation.get('mode')}\n"
 
-        prompt = f"""You are a summarizer agent. Create a concise, cumulative summary.
+        prompt = f"""You are a summarizer agent. Create a concise, cumulative summary adapted to the conversation domain.
 
+{domain_meta}
 Previous summary: {self.current_summary or 'None yet'}
 New chunk: {chunk}
 Related context: {context_str or 'None'}

@@ -30,7 +30,25 @@ app.post('/stop-stream', (req, res) => {
 });
 
 const server = http.createServer(app);
-const wsServer = new WsServer({ port: PORT, aiUrl: AI_URL });
+const wsServer = new WsServer({
+  port: PORT,
+  aiUrl: AI_URL,
+  audioBufferMs: parseInt(process.env.AUDIO_BUFFER_MS || '1200', 10),
+  onLiveModeChange: (isLive) => {
+    if (isLive) {
+      streamer.stop();
+    }
+  },
+  onSimulatedStart: () => {
+    if (!streamer.isRunning()) {
+      streamer.reset();
+      streamer.start();
+    }
+  },
+  onSimulatedStop: () => {
+    streamer.stop();
+  },
+});
 wsServer.start(server);
 
 const streamer = new StreamEmitter({
@@ -62,12 +80,6 @@ const streamer = new StreamEmitter({
 server.listen(PORT, () => {
   console.log(`[Server] HTTP + WS server running on port ${PORT}`);
   console.log(`[Server] AI URL: ${AI_URL}`);
-  
-  // Auto-start stream after 1 second
-  setTimeout(() => {
-    console.log('[Stream] Auto-starting stream...');
-    streamer.start();
-  }, 1000);
 });
 
 module.exports = { app, server };

@@ -11,6 +11,9 @@ A real-time AI system that analyzes a continuous text stream and generates summa
 │   │ Summary  │  │  Questions   │  │    Insights     │  │
 │   │  Panel   │  │    Panel     │  │     Panel       │  │
 │   └──────────┘  └──────────────┘  └─────────────────┘  │
+│   ┌───────────────────┐        ┌───────────────────┐  │
+│   │ Key Moments Panel │        │ Action Agent Panel│  │
+│   └───────────────────┘        └───────────────────┘  │
 │              WebSocket (ws://localhost:3001)             │
 └────────────────────────┬────────────────────────────────┘
                          │
@@ -29,6 +32,10 @@ A real-time AI system that analyzes a continuous text stream and generates summa
 │   │  Agent   │  │  Generator   │  │   Generator     │  │
 │   └────┬─────┘  └──────┬───────┘  └────────┬────────┘  │
 │        └───────────────┴──────────────────┘            │
+│   ┌──────────┐  ┌──────────────┐                        │
+│   │ Alert    │  │   Action     │                        │
+│   │ Agent    │  │   Agent      │                        │
+│   └──────────┘  └──────────────┘                        │
 │                    ┌──────────┐                         │
 │                    │ ChromaDB │ (RAG / vector store)    │
 │                    └──────────┘                         │
@@ -62,7 +69,7 @@ A real-time AI system that analyzes a continuous text stream and generates summa
 │   └── tests/               # pytest tests
 ├── frontend/                # Next.js frontend
 │   └── src/app/
-│       ├── page.tsx         # Main page with 3 real-time panels
+│       ├── page.tsx         # Main page with real-time panels + key moments
 │       ├── layout.tsx       # Root layout
 │       └── globals.css      # Styles
 └── package.json             # Root scripts (concurrently)
@@ -150,6 +157,6 @@ By default (`MOCK_MODE=true`), the system runs without an OpenAI API key. All ag
 2. Backend auto-starts streaming educational text about AI (12 sentences, 2s apart)
 3. Each chunk is broadcast to all WebSocket clients
 4. Backend calls the Python AI server for each chunk
-5. AI pipeline: chunk → ChromaDB (store) → RAG retrieval → 3 agents → response
+5. AI pipeline: chunk → ChromaDB (store) → RAG retrieval → 5 agents → response
 6. AI results are broadcast to all WebSocket clients
-7. Frontend updates 3 panels in real-time: Summary, Questions, Insights
+7. Frontend updates panels in real-time: Summary, Questions, Insights, Key Moments, Action Agent

@@ -10,12 +10,16 @@ class InsightGeneratorAgent(BaseAgent):
         super().__init__(llm)
         self.all_insights: List[str] = []
 
-    def process(self, chunk: str, context: List[str] = None) -> List[str]:
-        """Generate insights based on chunk and retrieved context."""
+    def process(self, chunk: str, context: List[str] = None, conversation: dict = None) -> List[str]:
+        """Generate insights based on chunk and retrieved context, adapting to conversation domain."""
         context_str = "\n".join(context or [])
+        domain_meta = ''
+        if conversation:
+            domain_meta = f"Conversation domain: {conversation.get('domain')} | intent: {conversation.get('intent')} | mode: {conversation.get('mode')}\n"
 
-        prompt = f"""You are an insight generator agent. Generate 2-3 actionable insights.
+        prompt = f"""You are an insight generator agent. Generate 2-3 actionable insights appropriate to the conversation domain.
 
+{domain_meta}
 Current chunk: {chunk}
 Related context: {context_str or 'None'}
 
@@ -49,7 +53,12 @@ Insights:"""
         
         prompt_lower = prompt.lower()
         selected = []
-        
+        # domain-aware mocks
+        if "teaching" in prompt_lower or "education" in prompt_lower:
+            selected.append("→ Chunk the concept into 2-3 teaching points and check comprehension at each step.")
+        if "research" in prompt_lower or "experiment" in prompt_lower:
+            selected.append("→ Consider a minimal experiment to validate the primary hypothesis and measure effect size.")
+
         if "language" in prompt_lower or "llm" in prompt_lower:
             selected.append("→ Large language models are most effective when given rich, structured context.")
         if "stream" in prompt_lower or "real-time" in prompt_lower:

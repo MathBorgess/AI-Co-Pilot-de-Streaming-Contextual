@@ -10,12 +10,16 @@ class QuestionGeneratorAgent(BaseAgent):
         super().__init__(llm)
         self.all_questions: List[str] = []
 
-    def process(self, chunk: str, context: List[str] = None) -> List[str]:
+    def process(self, chunk: str, context: List[str] = None, conversation: dict = None) -> List[str]:
         """Generate questions based on new chunk and context."""
         context_str = "\n".join(context or [])
+        domain_meta = ''
+        if conversation:
+            domain_meta = f"Conversation domain: {conversation.get('domain')} | intent: {conversation.get('intent')} | mode: {conversation.get('mode')}\n"
 
-        prompt = f"""You are a question generation agent. Generate 2-3 thought-provoking questions.
+        prompt = f"""You are a question generation agent. Generate 2-3 thought-provoking questions appropriate for the conversation domain.
 
+{domain_meta}
 Current chunk: {chunk}
 Related context: {context_str or 'None'}
 
@@ -52,6 +56,13 @@ Questions:"""
         chunk_lower = prompt.lower()
         selected = []
         
+        # domain-aware mocks
+        if "teaching" in prompt.lower() or "education" in prompt.lower():
+            selected.append("? Can you restate the core idea in simpler terms for learners?")
+        if "research" in prompt.lower() or "experiment" in prompt.lower():
+            selected.append("? What is the key hypothesis and how would you test it?")
+        if "sports" in prompt.lower() or "training" in prompt.lower():
+            selected.append("? What measurable performance metric should we track?")
         if "ai" in chunk_lower or "machine learning" in chunk_lower:
             selected.append("? How does this concept apply to real-world AI systems?")
         if "stream" in chunk_lower:

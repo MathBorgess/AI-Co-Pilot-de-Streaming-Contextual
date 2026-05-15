@@ -6,10 +6,10 @@
     "dev": "concurrently \"npm run dev:ai\" \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
-    "dev:ai": "cd ai && python server.py",
+    "dev:ai": "cd ai && ./.venv/bin/python server.py",
     "test": "npm run test:backend && npm run test:ai",
     "test:backend": "cd backend && npm test",
-    "test:ai": "cd ai && python -m pytest tests/ -v"
+    "test:ai": "cd ai && ./.venv/bin/python -m pytest tests/ -v"
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
